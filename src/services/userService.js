@@ -3,13 +3,20 @@ import Boom from '@hapi/boom';
 import User from '../models/user';
 
 /**
- * Get all users.
- *
- * @returns {Promise}
+ * Query for users.
+ * 
+ * @param {Object} filter - Mongo filter.
+ * @param {Object} options - Query options.
+ * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc).
+ * @param {number} [options.limit] - Maximum number of results per page (default = 10).
+ * @param {number} [options.page] - Current page (default = 1).
+ * @returns {Promise<QueryResult>}
  */
-export function getAllUsers() {
-  return User.fetchAll();
-}
+export const getAllUsers = async (filter, options) => {
+  const users = await User.paginate(filter, options);
+
+  return users;
+};
 
 /**
  * Get a user.
@@ -18,12 +25,7 @@ export function getAllUsers() {
  * @returns {Promise}
  */
 export function getUser(id) {
-  return new User({ id })
-    .fetch()
-    .then(user => user)
-    .catch(User.NotFoundError, () => {
-      throw Boom.notFound('User not found');
-    });
+  return User.findById(id);
 }
 
 /**
@@ -32,19 +34,35 @@ export function getUser(id) {
  * @param   {Object}  user
  * @returns {Promise}
  */
-export function createUser(user) {
-  return new User({ name: user.name }).save();
+export async function createUser(user) {
+  if (await User.isEmailTaken(user.email)) {
+    throw Boom.badRequest('Email already taken.');
+  }
+
+  return User.create(user);
 }
 
 /**
  * Update a user.
  *
  * @param   {Number|String}  id
- * @param   {Object}         user
+ * @param   {Object}         data
  * @returns {Promise}
  */
-export function updateUser(id, user) {
-  return new User({ id }).save({ name: user.name });
+export async function updateUser(id, data) {
+  const user = await getUser(id);
+
+  if (!user) {
+    throw Boom.notFound('User not found.');
+  }
+  if (data.email && (await User.isEmailTaken(data.email, id))) {
+    throw Boom.badRequest('Email already taken.');
+  }
+  Object.assign(user, data);
+
+  await user.save();
+
+  return user;
 }
 
 /**
@@ -53,6 +71,15 @@ export function updateUser(id, user) {
  * @param   {Number|String}  id
  * @returns {Promise}
  */
-export function deleteUser(id) {
-  return new User({ id }).fetch().then(user => user.destroy());
+export async function deleteUser(id) {
+  const user = await getUser(id);
+
+  if (!user) {
+    throw Boom.notFound('User not found.');
+  }
+
+  await user.remove();
+
+  return user;
+
 }

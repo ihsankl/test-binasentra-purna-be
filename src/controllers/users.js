@@ -1,6 +1,7 @@
 import HttpStatus from 'http-status-codes';
 
 import * as userService from '../services/userService';
+import pick from '../utils/pick';
 
 /**
  * Get all users.
@@ -10,8 +11,11 @@ import * as userService from '../services/userService';
  * @param {Function} next
  */
 export function fetchAll(req, res, next) {
+  const filter = pick(req.query, ['name', 'role']);
+  const options = pick(req.query, ['sortBy', 'limit', 'page']);
+
   userService
-    .getAllUsers()
+    .getAllUsers(filter, options)
     .then(data => res.json({ data }))
     .catch(err => next(err));
 }

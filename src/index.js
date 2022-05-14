@@ -16,6 +16,8 @@ import routes from './routes';
 import json from './middlewares/json';
 import logger, { logStream } from './utils/logger';
 import * as errorHandler from './middlewares/errorHandler';
+import mongoose from 'mongoose';
+import { config } from './config/config';
 
 // Initialize Sentry
 // https://docs.sentry.io/platforms/node/express/
@@ -69,34 +71,35 @@ app.use(Sentry.Handlers.errorHandler());
 app.use(errorHandler.genericErrorHandler);
 app.use(errorHandler.methodNotAllowed);
 
-app.listen(app.get('port'), app.get('host'), () => {
-  logger.info(`Server started at http://${app.get('host')}:${app.get('port')}/api`);
+let server;
+
+mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
+  logger.info('Connected to MongoDB');
+  server = app.listen(app.get('port'), app.get('host'), () => {
+    logger.info(`Server started at http://${app.get('host')}:${app.get('port')}/api`);
+  });
 });
+
+const exitHandler = () => {
+  if (server) {
+    server.close(() => {
+      logger.info('Server closed');
+      process.exit(1);
+    });
+  } else {
+    process.exit(1);
+  }
+};
+
+const unexpectedErrorHandler = (error) => {
+  logger.error('Unexpected error', error);
+  exitHandler();
+};
 
 // Catch unhandled rejections
-process.on('unhandledRejection', (err) => {
-  logger.error('Unhandled rejection', err);
-
-  try {
-    Sentry.captureException(err);
-  } catch (err) {
-    logger.error('Sentry error', err);
-  } finally {
-    process.exit(1);
-  }
-});
+process.on('unhandledRejection', unexpectedErrorHandler);
 
 // Catch uncaught exceptions
-process.on('uncaughtException', (err) => {
-  logger.error('Uncaught exception', err);
-
-  try {
-    Sentry.captureException(err);
-  } catch (err) {
-    logger.error('Sentry error', err);
-  } finally {
-    process.exit(1);
-  }
-});
+process.on('uncaughtException', unexpectedErrorHandler);
 
 export default app;
