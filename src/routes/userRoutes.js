@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import auth from '../middlewares/auth';
 
 import * as userController from '../controllers/users';
 
@@ -17,16 +18,16 @@ router.get('/:id', userController.fetchById);
 /**
  * POST /api/users.
  */
-router.post('/', userController.create);
+router.post('/', auth('manageUsers'), userController.create);
 
 /**
  * PUT /api/users/:id.
  */
-router.put('/:id', userController.update);
+router.put('/:id', auth('manageUsers'), userController.update);
 
 /**
  * DELETE /api/users/:id.
  */
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id', auth('manageUsers'), userController.deleteUser);
 
 export default router;

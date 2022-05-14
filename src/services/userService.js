@@ -24,8 +24,30 @@ export const getAllUsers = async (filter, options) => {
  * @param   {Number|String}  id
  * @returns {Promise}
  */
-export function getUser(id) {
-  return User.findById(id);
+export async function getUser(id) {
+  const user = await User.findById(id);
+
+  if (!user) {
+    throw Boom.notFound('User tidak ditemukan.');
+  }
+
+  return user;
+}
+
+/**
+ * Get a user by email.
+ *
+ * @param   {Number|String}  email
+ * @returns {Promise}
+ */
+export async function getUserByEmail(email) {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw Boom.notFound('User tidak ditemukan.');
+  }
+
+  return user;
 }
 
 /**
@@ -53,7 +75,7 @@ export async function updateUser(id, data) {
   const user = await getUser(id);
 
   if (!user) {
-    throw Boom.notFound('User not found.');
+    throw Boom.notFound('User tidak ditemukan.');
   }
   if (data.email && (await User.isEmailTaken(data.email, id))) {
     throw Boom.badRequest('Email already taken.');
@@ -75,7 +97,7 @@ export async function deleteUser(id) {
   const user = await getUser(id);
 
   if (!user) {
-    throw Boom.notFound('User not found.');
+    throw Boom.notFound('User tidak ditemukan.');
   }
 
   await user.remove();

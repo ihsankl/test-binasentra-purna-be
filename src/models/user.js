@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import { toJSON, paginate } from './plugins';
-import roles from '../config/roles';
+import { roles } from '../config/roles';
+import { Boom } from '@hapi/boom';
 
 const userSchema = mongoose.Schema(
   {
@@ -19,7 +20,7 @@ const userSchema = mongoose.Schema(
       lowercase: true,
       validate(value) {
         if (!validator.isEmail(value)) {
-          throw new Error('Invalid email');
+          throw Boom.badRequest('Invalid email');
         }
       },
     },
@@ -30,7 +31,7 @@ const userSchema = mongoose.Schema(
       minlength: 8,
       validate(value) {
         if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
-          throw new Error('Password must contain at least one letter and one number');
+          throw Boom.badRequest('Password must contain at least one letter and one number');
         }
       },
       private: true, // used by the toJSON plugin

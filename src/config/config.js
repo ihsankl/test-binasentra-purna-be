@@ -1,6 +1,7 @@
 import Joi from '@hapi/joi';
 import path from 'path';
 import dotenv from 'dotenv';
+import { Boom } from '@hapi/boom';
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
@@ -29,7 +30,7 @@ const envVarsSchema = Joi.object()
 const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: 'key' } }).validate(process.env);
 
 if (error) {
-    throw new Error(`Config validation error: ${error.message}`);
+    throw Boom.badImplementation(error);
 }
 
 const config = {

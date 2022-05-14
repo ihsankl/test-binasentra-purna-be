@@ -11,13 +11,16 @@ import favicon from 'serve-favicon';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import * as Sentry from '@sentry/node';
+import passport from 'passport';
+import mongoose from 'mongoose';
 
 import routes from './routes';
 import json from './middlewares/json';
 import logger, { logStream } from './utils/logger';
 import * as errorHandler from './middlewares/errorHandler';
-import mongoose from 'mongoose';
 import { config } from './config/config';
+import { jwtStrategy } from "./config/passport"
+import { authLimiter } from './middlewares/rateLimiter';
 
 // Initialize Sentry
 // https://docs.sentry.io/platforms/node/express/
@@ -48,6 +51,14 @@ app.use(morgan('tiny', { stream: logStream }));
 app.use(bodyParser.json());
 app.use(errorHandler.bodyParser);
 app.use(json);
+// jwt authentication
+app.use(passport.initialize());
+passport.use('jwt', jwtStrategy);
+
+// limit repeated failed requests to auth endpoints
+if (config.env === 'production') {
+  app.use('/v1/auth', authLimiter);
+}
 
 // API Routes
 app.use('/api', routes);
@@ -101,5 +112,12 @@ process.on('unhandledRejection', unexpectedErrorHandler);
 
 // Catch uncaught exceptions
 process.on('uncaughtException', unexpectedErrorHandler);
+
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received');
+  if (server) {
+    server.close();
+  }
+});
 
 export default app;
