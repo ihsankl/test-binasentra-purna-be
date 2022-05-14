@@ -1,6 +1,7 @@
 import Boom from '@hapi/boom';
 
 import User from '../models/user';
+import prisma from '../db';
 
 /**
  * Get all users.
@@ -8,7 +9,7 @@ import User from '../models/user';
  * @returns {Promise}
  */
 export function getAllUsers() {
-  return User.fetchAll();
+  return prisma.users.findMany();
 }
 
 /**

@@ -1,12 +1,17 @@
-import knexJs from 'knex';
-import bookshelf from 'bookshelf';
+// import knexJs from 'knex';
+// import bookshelf from 'bookshelf';
 
-import knexConfig from './knexfile';
+// import knexConfig from './knexfile';
 
-/**
- * Database connection.
- */
-const knex = knexJs(knexConfig);
-const db = bookshelf(knex);
+// /**
+//  * Database connection.
+//  */
+// const knex = knexJs(knexConfig);
+// const db = bookshelf(knex);
 
-export default db;
+// export default db;
+
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+
+export default prisma;
