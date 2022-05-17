@@ -1,4 +1,4 @@
-import { Boom } from "@hapi/boom";
+import Boom from "@hapi/boom";
 import Token from "../models/token";
 import * as userService from '../services/userService'
 import * as tokenService from '../services/tokenService'

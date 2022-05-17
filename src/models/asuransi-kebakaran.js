@@ -1,4 +1,4 @@
-import { Boom } from '@hapi/boom';
+import Boom from '@hapi/boom';
 import mongoose from 'mongoose';
 import { toJSON, paginate } from './plugins';
 
@@ -15,10 +15,6 @@ const asuransiSchema = mongoose.Schema(
                     throw Boom.badRequest('Jangka waktu pertanggungan tidak boleh lebih dari 10 tahun');
                 }
             },
-        },
-        okupasi: {
-            type: String,
-            required: true,
         },
         hargaBangunan: {
             type: Number,
@@ -58,7 +54,59 @@ const asuransiSchema = mongoose.Schema(
         },
         gempa: {
             type: Boolean,
-        }
+        },
+        nomorPolis: {
+            type: String,
+            required: true,
+            default: "Belum Terbit"
+        },
+        jenisPenanggungan: {
+            type: String,
+            default: 'Asuransi Kebakaran'
+        },
+        nomorInvoice: {
+            type: String,
+            required: true,
+            // invoice number from invoice model
+            validate(value) {
+                // format: K.001.XXXXX
+                if (!value.match(/^K\.[0-9]{3}\.\d{5}$/)) {
+                    throw Boom.badRequest('Nomor invoice harus dalam format K.001.XXXXX');
+                }
+            }
+        },
+        status: {
+            type: String,
+            enum: ['Approve', 'Reject'],
+        },
+        statusPembayaran: {
+            type: String,
+            enum: ['Belum Dibayar', 'Sudah Dibayar'],
+            default: 'Belum Dibayar'
+        },
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+        },
+        okupasi: {
+            type: String,
+            required: true,
+        },
+        total: {
+            type: Number,
+            required: true,
+        },
+        premiDasar: {
+            type: Number,
+            required: true,
+            validate(value) {
+                if (value < 0) {
+                    throw Boom.badRequest('Premi dasar tidak boleh negatif');
+                }
+            },
+            // premiDasar = hargaBangunan x ratePremi /1000 x periode(in years)
+        },
     },
     {
         timestamps: true,

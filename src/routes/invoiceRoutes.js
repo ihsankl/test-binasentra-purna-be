@@ -11,23 +11,56 @@ const router = Router();
 router.get('/', invoiceController.fetchAll);
 
 /**
+ * GET /api/invoice/last.
+ */
+router.get('/last', invoiceController.fetchLastInvoice);
+
+/**
+ * GET /api/invoice/ratepremi.
+ */
+router.get('/ratepremi', invoiceController.fetchAll);
+
+/**
+ * GET /api/invoice/ratepremi/:id.
+ */
+router.get('/ratepremi/:id', invoiceController.fetchById);
+
+/**
  * GET /api/invoice/:id.
  */
-router.get('/:id', auth('manageInvoice'), invoiceController.fetchById);
+router.get('/:id', invoiceController.fetchById);
 
 /**
  * POST /api/invoice.
  */
-router.post('/', auth('manageInvoice', 'createInvoice'), invoiceController.create);
+router.post('/', auth('createInvoice'), invoiceController.create);
+
+/**
+ * POST /api/invoice/ratepremi.
+ */
+router.post('/ratepremi', auth('createRatePremi'), invoiceController.create);
+
 
 /**
  * PUT /api/invoice/:id.
  */
-router.put('/:id', auth('manageInvoice'), invoiceController.update);
+router.put('/:id', auth('updateInvoice'), invoiceController.update);
+
+/**
+ * PUT /api/invoice/ratepremi/:id.
+ */
+router.put('/ratepremi/:id', auth('updateRatePremi'), invoiceController.update);
+
 
 /**
  * DELETE /api/invoice/:id.
  */
-router.delete('/:id', auth('manageInvoice'), invoiceController.deleteInvoice);
+router.delete('/:id', auth('deleteInvoice'), invoiceController.deleteInvoice);
+
+/**
+ * DELETE /api/invoice/ratepremi/:id.
+ */
+router.delete('/ratepremi/:id', auth('deleteRatePremi'), invoiceController.deleteInvoice);
+
 
 export default router;

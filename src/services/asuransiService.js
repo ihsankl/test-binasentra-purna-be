@@ -1,6 +1,23 @@
 import Boom from '@hapi/boom';
 
 import AsuransiKebakaran from '../models/asuransi-kebakaran';
+import Okupasi from '../models/okupasi';
+
+/**
+ * Get All okupasi.
+ * 
+ * @returns {Promise<QueryResult>}
+ */
+export const getAllOkupasi = async () => {
+    const okupasi = await Okupasi.find();
+    // results,
+    // page,
+    // limit,
+    // totalPages,
+    // totalResults,
+
+    return { results: okupasi };
+};
 
 /**
  * Query for asuransi.
@@ -35,6 +52,37 @@ export async function getAsuransi(id) {
 }
 
 /**
+* Get last invoice.
+*
+* @returns {Promise}
+*/
+export async function getLastInvoice() {
+    const invoice = await AsuransiKebakaran.findOne().sort({ createdAt: -1 });
+
+    if (!invoice) {
+        throw Boom.notFound('Invoice tidak ditemukan.');
+    }
+
+    return invoice;
+}
+
+/**
+* Get a okupasi.
+*
+* @param   {Number|String}  id
+* @returns {Promise}
+*/
+export async function getOkupasi(id) {
+    const okupasi = await Okupasi.findById(id);
+
+    if (!okupasi) {
+        throw Boom.notFound('Okupasi tidak ditemukan.');
+    }
+
+    return okupasi;
+}
+
+/**
  * Create new asuransi.
  *
  * @param   {Object}  asuransiData
@@ -43,6 +91,17 @@ export async function getAsuransi(id) {
 export function createAsuransi(asuransiData) {
 
     return AsuransiKebakaran.create(asuransiData);
+}
+
+/**
+ * Create new okupasi.
+ *
+ * @param   {Object}  okupasiData
+ * @returns {Promise}
+ */
+export function createOkupasi(okupasiData) {
+
+    return Okupasi.create(okupasiData);
 }
 
 /**
@@ -67,6 +126,27 @@ export async function updateAsuransi(id, data) {
 }
 
 /**
+ * Update a okupasi.
+ *
+ * @param   {Number|String}  id
+ * @param   {Object}         data
+ * @returns {Promise}
+ */
+export async function updateOkupasi(id, data) {
+    const okupasi = await getOkupasi(id);
+
+    if (!okupasi) {
+        throw Boom.notFound('Okupasi tidak ditemukan.');
+    }
+
+    Object.assign(okupasi, data);
+
+    await okupasi.save();
+
+    return okupasi;
+}
+
+/**
  * Delete a asuransi.
  *
  * @param   {Number|String}  id
@@ -82,5 +162,24 @@ export async function deleteAsuransi(id) {
     await asuransi.remove();
 
     return asuransi;
+
+}
+
+/**
+ * Delete a okupasi.
+ *
+ * @param   {Number|String}  id
+ * @returns {Promise}
+ */
+export async function deleteOkupasi(id) {
+    const okupasi = await getOkupasi(id);
+
+    if (!okupasi) {
+        throw Boom.notFound('Okupasi tidak ditemukan.');
+    }
+
+    await okupasi.remove();
+
+    return okupasi;
 
 }

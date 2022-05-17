@@ -35,6 +35,20 @@ export function fetchById(req, res, next) {
 }
 
 /**
+ * Get a user by its email.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
+export function fetchByEmail(req, res, next) {
+  userService
+    .getUserByEmail(req.query.email)
+    .then(data => res.json({ data }))
+    .catch(err => next(err));
+}
+
+/**
  * Create a new user.
  *
  * @param {Object} req

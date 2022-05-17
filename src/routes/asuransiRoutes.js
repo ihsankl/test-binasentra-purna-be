@@ -12,6 +12,12 @@ const router = Router();
 router.get('/', asuransiController.fetchAll);
 
 /**
+ * GET /api/asuransi/last.
+ */
+router.get('/last', asuransiController.fetchLastInvoice);
+
+
+/**
  * GET /api/asuransi/:id.
  */
 router.get('/:id', asuransiController.fetchById);
@@ -19,16 +25,16 @@ router.get('/:id', asuransiController.fetchById);
 /**
  * POST /api/asuransi.
  */
-router.post('/', auth('manageAsuransi', 'createAsuransi'), asuransiController.create);
+router.post('/', auth('createAsuransi'), asuransiController.create);
 
 /**
  * PUT /api/asuransi/:id.
  */
-router.put('/:id', auth('manageAsuransi'), asuransiController.update);
+router.put('/:id', auth('updateAsuransi'), asuransiController.update);
 
 /**
  * DELETE /api/asuransi/:id.
  */
-router.delete('/:id', auth('manageAsuransi'), asuransiController.deleteAsuransi);
+router.delete('/:id', auth('deleteAsuransi'), asuransiController.deleteAsuransi);
 
 export default router;

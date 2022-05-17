@@ -16,14 +16,19 @@ router.get('/', userController.fetchAll);
 router.get('/:id', userController.fetchById);
 
 /**
+ * GET /api/users/email/:email.
+ */
+router.get('/email/:email', userController.fetchByEmail);
+
+/**
  * POST /api/users.
  */
-router.post('/', auth('manageUsers'), userController.create);
+router.post('/', userController.create);
 
 /**
  * PUT /api/users/:id.
  */
-router.put('/:id', auth('manageUsers'), userController.update);
+router.put('/:id', auth('editUser'), userController.update);
 
 /**
  * DELETE /api/users/:id.

@@ -3,7 +3,7 @@ import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import { toJSON, paginate } from './plugins';
 import { roles } from '../config/roles';
-import { Boom } from '@hapi/boom';
+import Boom from '@hapi/boom';
 
 const userSchema = mongoose.Schema(
   {

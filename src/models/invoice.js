@@ -1,4 +1,4 @@
-import { Boom } from '@hapi/boom';
+import Boom from '@hapi/boom';
 import mongoose from 'mongoose';
 import { toJSON, paginate } from './plugins';
 
@@ -36,9 +36,6 @@ const invoiceSchema = mongoose.Schema(
                 }
             },
             // premiDasar = hargaBangunan x ratePremi /1000 x periode(in years)
-            default: function () {
-                return this.hargaBangunan * this.ratePremi / 1000 * this.periode;
-            }
         },
         ratePremi: {
             type: Number,

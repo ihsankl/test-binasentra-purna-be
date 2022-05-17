@@ -1,4 +1,4 @@
-import { Boom } from "@hapi/boom";
+import Boom from "@hapi/boom";
 import jwt from "jsonwebtoken";
 import moment from "moment";
 import Token from "../models/token";

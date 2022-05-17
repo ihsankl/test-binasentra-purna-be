@@ -1,6 +1,28 @@
 const allRoles = {
-    user: ['createAsuransi', 'createInvoice', 'createRequest'],
-    admin: ['getUsers', 'manageUsers', 'manageInvoice', 'manageAsuransi', 'manageRequest'],
+    user: [
+        'createAsuransi',
+        'createInvoice',
+        'createRequest',
+        'editUser',
+    ],
+    admin: [
+        'manageRatePremi',
+        'manageOkupasi',
+        'manageUsers',
+        'editUser',
+        'manageInvoice',
+        'manageAsuransi',
+        'manageRequest',
+        'createAsuransi',
+        'updateAsuransi',
+        'deleteAsuransi',
+        'createInvoice',
+        'updateInvoice',
+        'deleteInvoice',
+        'createRequest',
+        'updateRequest',
+        'deleteRequest',
+    ],
 };
 
 const roles = Object.keys(allRoles);

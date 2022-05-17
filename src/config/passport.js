@@ -7,7 +7,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { config } from './config';
 import User from "../models/user";
 import { tokenTypes } from './tokens';
-import { Boom } from '@hapi/boom';
+import Boom from '@hapi/boom';
 
 const jwtOptions = {
     secretOrKey: config.jwt.secret,

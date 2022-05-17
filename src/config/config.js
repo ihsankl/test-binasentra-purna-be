@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi';
 import path from 'path';
 import dotenv from 'dotenv';
-import { Boom } from '@hapi/boom';
+import Boom from '@hapi/boom';
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
